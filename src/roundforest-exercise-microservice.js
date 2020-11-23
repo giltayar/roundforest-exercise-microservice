@@ -2,11 +2,19 @@
  * @param {number} serverPortToListenTo
  * @param {string} postgresHost
  * @param {number} postgresPort
+ * @param {string} postgresUser
+ * @param {string} postgresPassword
  *
  * @returns {Promise<void>}
  */
-async function runMicroservice(serverPortToListenTo, postgresHost, postgresPort) {
-  serverPortToListenTo, postgresHost, postgresPort
+async function runMicroservice(
+  serverPortToListenTo,
+  postgresHost,
+  postgresPort,
+  postgresUser,
+  postgresPassword,
+) {
+  serverPortToListenTo, postgresHost, postgresPort, postgresUser,  postgresPassword,
 
   // Implement this
 }

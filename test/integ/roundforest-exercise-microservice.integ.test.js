@@ -10,12 +10,12 @@ const {runMicroservice, schema} = require('../../src/roundforest-exercise-micros
 
 describe('roundforest-exercise-microservice (integ)', function () {
   /**
-   * Run Docker-Compose (or just determine postgress address if POSTGRESS_ADDRESS is defined)
+   * Run Docker-Compose (or just determine postgres address if POSTGRES_ADDRESS is defined)
    */
   let postgresAddress
   before(async () => {
-    if (process.env.POSTGRESS_ADDRESS) {
-      postgresAddress = process.env.POSTGRESS_ADDRESS
+    if (process.env.POSTGRES_ADDRESS) {
+      postgresAddress = process.env.POSTGRES_ADDRESS
     } else {
       const {findAddress} = await runDockerCompose(path.join(__dirname, 'docker-compose.yaml'))
 
@@ -31,7 +31,13 @@ describe('roundforest-exercise-microservice (integ)', function () {
 
     await createSchema(host, parseInt(port, 10), schema)
 
-    await runMicroservice(8080, host, parseInt(port, 10))
+    await runMicroservice(
+      8080,
+      host,
+      parseInt(port, 10),
+      process.env.POSTGRES_USER || 'postgres',
+      process.env.POSTGRES_PASSWORD,
+    )
   })
 
   /**
@@ -74,8 +80,8 @@ async function createSchema(host, port, schema) {
   const client = new Pool({
     host,
     port,
-    user: process.env.POSTGRESS_USER || 'postgres',
-    password: process.env.POSTGRESS_PASSWORD,
+    user: process.env.POSTGRES_USER || 'postgres',
+    password: process.env.POSTGRES_PASSWORD,
   })
   await client.connect()
 

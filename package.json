@@ -16,9 +16,8 @@
     "access": "restricted"
   },
   "scripts": {
-    "test": "run-s test:eslint test:mocha",
-    "test:mocha": "mocha --no-timeouts --exit 'test/integ/*.test.js'",
-    "test:eslint": "eslint  --max-warnings=0 '**/*.js'"
+    "test": "mocha --no-timeouts --exit 'test/integ/*.test.js'",
+    "eslint": "eslint  --max-warnings=0 '**/*.js'"
   },
   "keywords": [
     "javascript",
