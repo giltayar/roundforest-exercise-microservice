@@ -1,3 +1,4 @@
+'use strict'
 const path = require('path')
 const mocha = require('mocha')
 const {describe, it, before} = mocha

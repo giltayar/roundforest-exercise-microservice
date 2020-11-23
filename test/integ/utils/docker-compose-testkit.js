@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('path')
 const crypto = require('crypto')
 const net = require('net')

@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * @param {number} serverPortToListenTo
  * @param {string} postgresHost
