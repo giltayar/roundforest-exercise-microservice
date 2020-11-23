@@ -1,41 +1,42 @@
-import path from 'path'
-import mocha from 'mocha'
-const {describe, it, after} = mocha
-import chai from 'chai'
-const {expect} = chai
-import {runDockerCompose} from '@seasquared/docker-compose-testkit'
-import {before} from '@seasquared/mocha-commons'
-import net from 'net'
-import {once} from 'events'
-import {runMicroservice} from '../../src/roundforest-exercise-microservice.js'
-import {fetchAsJsonWithJsonBody} from './fetch-json.js'
+const path = require('path')
+const mocha = require('mocha')
+const {describe, it, before} = mocha
+const {expect} = require('chai')
+const {runDockerCompose, tcpHealthCheck} = require('./utils/docker-compose-testkit')
+const {fetchAsJsonWithJsonBody} = require('./utils/fetch-json.js')
+const {Pool} = require('pg')
 
-const __filename = new URL(import.meta.url).pathname
-const __dirname = path.dirname(__filename)
+const {runMicroservice, schema} = require('../../src/roundforest-exercise-microservice.js')
 
 describe('roundforest-exercise-microservice (integ)', function () {
-  const {postgresAddress, teardown} = before(async () => {
+  /**
+   * Run Docker-Compose (or just determine postgress address if POSTGRESS_ADDRESS is defined)
+   */
+  let postgresAddress
+  before(async () => {
     if (process.env.POSTGRESS_ADDRESS) {
-      return {teardown: async () => 1, postgresAddress: process.env.POSTGRESS_ADDRESS}
+      postgresAddress = process.env.POSTGRESS_ADDRESS
     } else {
-      const {findAddress, teardown} = await runDockerCompose(
-        path.join(__dirname, 'docker-compose.yaml'),
-      )
+      const {findAddress} = await runDockerCompose(path.join(__dirname, 'docker-compose.yaml'))
 
-      return {
-        teardown,
-        postgresAddress: await findAddress('postgres', 5432, {healthCheck: tcpHealthCheck}),
-      }
+      postgresAddress = await findAddress('postgres', 5432, {healthCheck: tcpHealthCheck})
     }
   })
 
+  /**
+   * Create schema if needed and run exercise app
+   */
   before(async () => {
-    const [host, port] = postgresAddress().split(':')
+    const [host, port] = postgresAddress.split(':')
+
+    await createSchema(host, parseInt(port, 10), schema)
 
     await runMicroservice(8080, host, parseInt(port, 10))
   })
 
-  after(() => teardown()())
+  /**
+   * THE TESTS!
+   */
 
   it('should be able to calculate plus', async () => {
     expect(await fetchAsJsonWithJsonBody(`http://localhost:8080/plus`, [3, 5])).to.eql({result: 8})
@@ -65,17 +66,17 @@ describe('roundforest-exercise-microservice (integ)', function () {
 })
 
 /**
- * @param {string} address
+ * @param {string} host
+ * @param {number} port
+ * @param {string} schema
  */
-async function tcpHealthCheck(address) {
-  const [host, port] = address.split(':')
+async function createSchema(host, port, schema) {
+  const client = new Pool({
+    host,
+    port,
+    user: 'postgres',
+  })
+  await client.connect()
 
-  const socket = net.createConnection(parseInt(port, 10), host)
-
-  await Promise.race([
-    once(socket, 'connect'),
-    once(socket, 'error').then(([err]) => Promise.reject(err)),
-  ])
-
-  socket.destroy()
+  await client.query(schema)
 }

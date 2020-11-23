@@ -1,4 +1,4 @@
-import fetch from 'node-fetch'
+const fetch = require('node-fetch')
 
 /**
  * @typedef {(url: string | URL, init?: import('node-fetch').RequestInit) =>
@@ -13,7 +13,7 @@ import fetch from 'node-fetch'
  * @param {import('type-fest').JsonValue} json
  * @returns {Promise<import('type-fest').JsonValue>}
  */
-export async function fetchAsJsonWithJsonBody(url, json) {
+async function fetchAsJsonWithJsonBody(url, json) {
   const response = await fetch(url, {
     method: 'POST',
     headers: {'Content-Type': 'application/json', Accept: 'application/json'},
@@ -31,7 +31,7 @@ export async function fetchAsJsonWithJsonBody(url, json) {
  * @param {import('node-fetch').Response} response
  * @returns {Promise<void>}
  */
-export async function throwErrorFromBadStatus(url, response) {
+async function throwErrorFromBadStatus(url, response) {
   const body = await response.text().catch(() => `failed to get body of error`)
 
   throw makeError(`Response ${response.status} returned from ${url}, body: ${body}`, {
@@ -55,8 +55,12 @@ function makeError(error, properties) {
   if (typeof error === 'string') {
     error = new Error(error)
   }
-  // @ts-expect-error
   if (!properties) return error
 
   return Object.assign(error, properties)
+}
+
+module.exports = {
+  fetchAsJsonWithJsonBody,
+  throwErrorFromBadStatus,
 }

@@ -1,12 +1,24 @@
 /**
  * @param {number} serverPortToListenTo
- * @param {string} postressHost
- * @param {number} postgressAddress
+ * @param {string} postgresHost
+ * @param {number} postgresPort
  *
  * @returns {Promise<void>}
  */
-export async function runMicroservice(serverPortToListenTo, postressHost, postgressAddress) {
-  serverPortToListenTo
-  postressHost
-  postgressAddress
+async function runMicroservice(serverPortToListenTo, postgresHost, postgresPort) {
+  serverPortToListenTo, postgresHost, postgresPort
+
+  // Implement this
+}
+
+// If you need the test to create a schema, you can put the schema here.
+const schema = `
+create table if not exists someTable (
+  afield varchar(255)
+)
+`
+
+module.exports = {
+  runMicroservice,
+  schema,
 }
