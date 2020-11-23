@@ -74,7 +74,8 @@ async function createSchema(host, port, schema) {
   const client = new Pool({
     host,
     port,
-    user: 'postgres',
+    user: process.env.POSTGRESS_USER || 'postgres',
+    password: process.env.POSTGRESS_PASSWORD,
   })
   await client.connect()
 

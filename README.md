@@ -1,6 +1,6 @@
 # roundforest-exercise-microservice
 
-Write a "calculator" microservice. It can do addition and substraction, and remember
+Write a "calculator" web app. It can do addition and substraction, and remember
 the operations per-user!
 
 ## Pre-requisites
@@ -11,7 +11,10 @@ the operations per-user!
 
 ## Installation
 
-First, `npm ci` (or `npm install` if you are so inclined):
+Before everything, fork this repository to your user. The result of this exercise
+is the forked repository.
+
+Now, after cloning, execute `npm ci` (or `npm install` if you are so inclined):
 
 ```sh
 npm ci
@@ -19,8 +22,8 @@ npm ci
 
 ## Running the tests
 
-Now you can run the tests. These tests will fail, because you haven't written the microservice!
-But let's run the anyway.
+To see whether your app is correct, you should run the tests.
+These tests will fail, because you haven't written the microservice! But let's run the anyway.
 
 If you have Docker running, just run `npm test`:
 
@@ -63,6 +66,30 @@ If you want to run just one test...
 3. Change the `it` to `it.only`
 4. Run `npm test` again
 
-### Exercise is completed when
+## What you should write
 
-All the tests pass.
+You should write the function `runMicroservice` in `src/roundforest-exercise-microservice.js`. It
+should create the web app, and listen on the port given. It will also be given the host and port
+of the postgres server so that it can connect to it.
+
+The web app needs to have four REST entry points:
+
+1. `/plus`: accepts a JSON array (`[left, right]`) of the two operands,
+   and returns `{result: <the sum of the operands>}`. It will also store
+   a log of the operation in the Postgres DB
+1. `/minus`: accepts a JSON array (`[left, right]`) of the two operands,
+   and returns `{result: <the diff of the operands (left - right)>}`. It will also store
+   a log of the operation in the Postgres DB
+1. `/list:`, returns an array with a list of the operations performed. You can look at the last
+   test in `test/integ/roundforest-exercise-microservice.integ.test.js` to see the
+   format of the return
+1. `/clear`, clears the log of all the operations, and returns `{}`
+
+All the above entry points are tested in the test, so you can look at the test if you don't
+understand something
+
+## Definition of Done
+
+1. The tests pass
+1. You are satisfied with the code
+1. You have commited and pushed the code to your forked repository
