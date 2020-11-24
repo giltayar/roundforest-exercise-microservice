@@ -16,7 +16,8 @@ async function runMicroservice(
   postgresUser,
   postgresPassword,
 ) {
-  serverPortToListenTo, postgresHost, postgresPort, postgresUser,  postgresPassword
+  // You can remove this line once you've implemented everything
+  serverPortToListenTo, postgresHost, postgresPort, postgresUser, postgresPassword
 
   // Implement this
 }
